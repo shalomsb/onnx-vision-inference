@@ -1,0 +1,12 @@
+# Python
+__pycache__/
+*.pyc
+
+# ONNX models
+*.onnx
+
+# Output images
+app/yolo/output/
+
+# Input assets (large files)
+app/assets/
