@@ -5,15 +5,16 @@ function usage
 {
     echo "usage: ./launch.sh [-b/-d/-r] [--cpu/--gpu]"
     echo "Choose action from:"
-    echo "      -b | Build Docker image"
+    echo "      -b [model] | Build/download ONNX models (model: yolo, da3, scrfd, sam2; default: all)"
     echo "      -d | Develop inside Docker container"
-    echo "      -r | Run inference pipeline"
+    echo "      -r [model] | Run inference pipeline (model: yolo, da3, scrfd, sam2; default: yolo)"
     echo "Choose runtime (optional, default: --cpu):"
     echo "      --cpu | Use CPU base image (ubuntu:22.04)"
     echo "      --gpu | Use GPU base image (nvcr.io/nvidia/cuda:12.3.2-cudnn9-runtime-ubuntu22.04)"
 }
 
 ACTION=""
+MODEL=""
 
 # Auto-detect GPU
 if command -v nvidia-smi &>/dev/null && nvidia-smi &>/dev/null; then
@@ -32,7 +33,13 @@ while [[ "$1" != "" ]]; do
         --cpu )         RUNTIME=cpu ;;
         --gpu )         RUNTIME=gpu ;;
         -h )            usage && exit ;;
-        * )             usage && exit ;;
+        * )
+            if [[ ($ACTION == '-r' || $ACTION == '-b') && -z $MODEL ]]; then
+                MODEL=$1
+            else
+                usage && exit
+            fi
+            ;;
     esac
     shift;
 done
@@ -71,7 +78,7 @@ if [[ $ACTION == '-b' ]] || [[ $ACTION == '-r' ]] || [[ $ACTION == '-d' ]]; then
     docker run $DOCKER_ARGS \
         --entrypoint /opt/entrypoint.sh \
         $DOCKER_TAG:$DOCKER_TAG_VERSION \
-        $ACTION;
+        $ACTION $MODEL;
     exit;
 
 else
