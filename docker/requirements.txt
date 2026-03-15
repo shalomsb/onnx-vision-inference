@@ -2,3 +2,4 @@ onnxruntime-gpu
 numpy==1.26.0
 opencv-python-headless
 PyYAML
+open3d
