@@ -5,12 +5,12 @@ function usage
 {
     echo "usage: ./launch.sh [-b/-d/-r] [--cpu/--gpu]"
     echo "Choose action from:"
-    echo "      -b [model] | Build/download ONNX models (model: yolo, da3, scrfd, sam2; default: all)"
+    echo "      -b [model] | Build/download ONNX models (model: yolo, da3, scrfd, sam2, gdino; default: all)"
     echo "      -d | Develop inside Docker container"
-    echo "      -r [model] | Run inference pipeline (model: yolo, da3, scrfd, sam2; default: yolo)"
+    echo "      -r [model] | Run inference pipeline (model: yolo, da3, scrfd, sam2, gdino; default: yolo)"
     echo "Choose runtime (optional, default: --cpu):"
     echo "      --cpu | Use CPU base image (ubuntu:22.04)"
-    echo "      --gpu | Use GPU base image (nvcr.io/nvidia/cuda:12.3.2-cudnn9-runtime-ubuntu22.04)"
+    echo "      --gpu | Use GPU base image (nvcr.io/nvidia/cuda:12.8.1-cudnn-runtime-ubuntu22.04)"
 }
 
 ACTION=""
@@ -46,7 +46,7 @@ done
 
 # Select base image
 if [[ $RUNTIME == "gpu" ]]; then
-    BASE_IMAGE="nvcr.io/nvidia/cuda:12.3.2-cudnn9-runtime-ubuntu22.04"
+    BASE_IMAGE="nvcr.io/nvidia/cuda:12.8.1-cudnn-runtime-ubuntu22.04"
 else
     BASE_IMAGE="ubuntu:22.04"
 fi

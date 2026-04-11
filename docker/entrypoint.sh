@@ -4,8 +4,8 @@ function usage
 {
     echo "usage: ./entrypoint.sh [-b/-r/-d] [model]"
     echo "Choose action from:"
-    echo "  -b [model]| Build/download ONNX models (model: yolo, da3, scrfd, sam2; default: all)"
-    echo "  -r [model]| Run inference pipeline (model: yolo, da3, scrfd, sam2, yolo+sam2; default: yolo)"
+    echo "  -b [model]| Build/download ONNX models (model: yolo, da3, scrfd, sam2, gdino; default: all)"
+    echo "  -r [model]| Run inference pipeline (model: yolo, da3, scrfd, sam2, yolo+sam2, gdino; default: yolo)"
     echo "  -d        | Develop using bash terminal"
     echo "  -h        | Help"
 }
@@ -40,6 +40,7 @@ if [[ $ACTION == '-b' ]]; then
         bash download_da3_onnx.sh
         bash download_scrfd_onnx.sh
         bash export_sam2_onnx.sh
+        bash download_gdino_onnx.sh
     else
         case $MODEL in
             yolo)
@@ -54,8 +55,11 @@ if [[ $ACTION == '-b' ]]; then
             sam2)
                 bash export_sam2_onnx.sh
                 ;;
+            gdino)
+                bash download_gdino_onnx.sh
+                ;;
             *)
-                echo "Unknown model: $MODEL (supported: yolo, da3, scrfd, sam2)"
+                echo "Unknown model: $MODEL (supported: yolo, da3, scrfd, sam2, gdino)"
                 exit 1
                 ;;
         esac
@@ -81,8 +85,11 @@ elif [[ $ACTION == '-r' ]]; then
         yolo+sam2)
             python3 sam2/pipeline_yolo.py --image /app/assets/images/image1.jpg --yolo-model yolo/onnx/yolo11n.onnx --sam2-model-dir sam2/onnx/small --gpu
             ;;
+        gdino)
+            python3 -m groundingdino.main --image /app/assets/images/image1.jpg --model groundingdino/onnx/model.onnx --text "car ." --gpu
+            ;;
         *)
-            echo "Unknown model: $MODEL (supported: yolo, da3, scrfd, sam2, yolo+sam2)"
+            echo "Unknown model: $MODEL (supported: yolo, da3, scrfd, sam2, yolo+sam2, gdino)"
             exit 1
             ;;
     esac
