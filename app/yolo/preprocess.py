@@ -49,6 +49,7 @@ def letterbox(
     # we take the resized image and pad it to the target size. 
     # for example, we take the 640x360 resized image and add 70 pixels top and bottom,
     # and 0 pixels left and right, to get a 640x640 padded image.
+    # args: the resized image before padding, the number of pixels to pad on each side, the padding color (BGR)
     padded = cv2.copyMakeBorder(
         resized, top, bottom, left, right,
         cv2.BORDER_CONSTANT, value=color

@@ -88,6 +88,6 @@ def save_results(
     for i, (img, det) in enumerate(zip(images, results)):
         p = prompts[i] if prompts else None
         drawn = draw_masks(img, det, prompts=p)
-        path = os.path.join(output_dir, f"result_{i}.jpg")
+        path = os.path.join(output_dir, f"result_{i}.{i}.jpg")
         cv2.imwrite(path, drawn)
         print(f"Saved: {path}")

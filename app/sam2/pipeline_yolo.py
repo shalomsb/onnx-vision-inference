@@ -38,8 +38,8 @@ COCO_NAMES = [
 
 
 def main(image_path: str,
-         yolo_model: str = "yolo/onnx/yolo11n.onnx",
-         sam2_model_dir: str = "sam2/onnx/small",
+         yolo_model: str = "yolo/onnx/yolo11x.onnx",
+         sam2_model_dir: str = "sam2/onnx/large",
          gpu: bool = False,
          conf_threshold: float = 0.45,
          iou_threshold: float = 0.45,
@@ -50,7 +50,7 @@ def main(image_path: str,
     if image is None:
         print(f"Failed to load image: {image_path}")
         return
-
+    # cv2 load in shape (H, W, C) in BGR order
     orig_h, orig_w = image.shape[:2]
     print(f"Image: {image_path} ({orig_w}x{orig_h})")
 
@@ -96,6 +96,7 @@ def main(image_path: str,
 
     # ── SAM2 segmentation ─────────────────────────────────────────────
     print("\n--- SAM2 Segmentation ---")
+    # blob is [1, 3, 1024, 1024] float32 in RGB order, normalized to ImageNet stats
     blob, scale_x, scale_y = sam2_preprocess(image)
 
     sam2_sessions = load_sam2(sam2_model_dir, providers=providers)
@@ -109,6 +110,7 @@ def main(image_path: str,
     point_coords, point_labels = transform_boxes(boxes, scale_x, scale_y)
 
     # Expand image_embed for batch of prompts
+    # from [1, 256, 64, 64] to [N, 256, 64, 64] where N is number of detections/prompts
     image_embed = np.tile(features["pix_feat"], (num_det, 1, 1, 1))
 
     start = time.perf_counter()
@@ -145,8 +147,8 @@ def parse_class_filter(s: str) -> list[int]:
 if __name__ == "__main__":
     parser = argparse.ArgumentParser(description="YOLO + SAM2 detection & segmentation pipeline")
     parser.add_argument("--image", type=str, default="/app/assets/images/image1.jpg")
-    parser.add_argument("--yolo-model", type=str, default="yolo/onnx/yolo11n.onnx")
-    parser.add_argument("--sam2-model-dir", type=str, default="sam2/onnx/small")
+    parser.add_argument("--yolo-model", type=str, default="yolo/onnx/yolo11x.onnx")
+    parser.add_argument("--sam2-model-dir", type=str, default="sam2/onnx/large")
     parser.add_argument("--gpu", action="store_true")
     parser.add_argument("--conf-threshold", type=float, default=0.45)
     parser.add_argument("--iou-threshold", type=float, default=0.45)

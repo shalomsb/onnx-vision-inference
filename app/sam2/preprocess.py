@@ -37,9 +37,9 @@ def preprocess(
     chw = np.ascontiguousarray(rgb.transpose(2, 0, 1), dtype=np.float32)
 
     # ImageNet normalize: (pixel - mean) / std
-    chw[0] = (chw[0] - PIXEL_MEAN[0]) / PIXEL_STD[0]
-    chw[1] = (chw[1] - PIXEL_MEAN[1]) / PIXEL_STD[1]
-    chw[2] = (chw[2] - PIXEL_MEAN[2]) / PIXEL_STD[2]
+    chw[0] = (chw[0] - PIXEL_MEAN[0]) / PIXEL_STD[0] # Red channel
+    chw[1] = (chw[1] - PIXEL_MEAN[1]) / PIXEL_STD[1] # Green channel
+    chw[2] = (chw[2] - PIXEL_MEAN[2]) / PIXEL_STD[2] # Blue channel
 
     # Add batch dimension
     blob = chw[np.newaxis, ...]
